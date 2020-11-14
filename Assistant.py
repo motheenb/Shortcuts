@@ -32,7 +32,7 @@ def valid_command(op) -> bool:
     if op in ops:
         return True
     else:
-        print("Invalid operation!")
+        print("Invalid operation!!")
         return False
 
 
