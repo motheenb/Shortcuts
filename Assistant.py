@@ -20,7 +20,7 @@ def listen(running):  # listens for user input
 
 
 def load_operations():
-    ops.append("sc")  # create short-cut
+    ops.append("sc")  # create short-cut.
     ops.append("p")  # play youtube song
     ops.append("o")  # open alias dir.
     ops.append("w")  # open web URL
