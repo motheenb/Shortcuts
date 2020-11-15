@@ -74,7 +74,7 @@ def handle_lol():
 def handle_n():
     n = input("Enter Note: ")
     title = input("Enter Title: ")
-    note[title] = n
+    note[title] = str(n)
     save()
     print("Saved Note: ", {title})
 
@@ -125,11 +125,11 @@ def save():
 
 
 def read_notes() -> dict:
-    return np.load('C:/py/notes.npy', allow_pickle=True).item()
+    return np.load(r'notes.npy', allow_pickle=True).item()
 
 
 def read_dirs() -> dict:
-    return np.load('C:/py/dirs.npy', allow_pickle=True).item()
+    return np.load(r'dirs.npy', allow_pickle=True).item()
 
 
 ops = []

@@ -1,4 +1,5 @@
 import re
+import subprocess
 import threading
 import urllib
 import vlc
@@ -13,8 +14,8 @@ class Assistant(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         self.running = True
-        self.dirs = read_dirs()
-        self.notes = read_notes()
+        self.dirs = self.read_dirs()
+        self.notes = self.read_notes()
         self.current_site = ''
         self.current_song = ''
         self.video = None
@@ -32,6 +33,15 @@ class Assistant(threading.Thread):
         while self.running is True:
             input_cmd = input('>> ')
             self.handle_input(input_cmd)
+
+    def handle_o(self):
+        alias = input("Enter Alias/Title: ")
+        if self.alias_exists(alias):
+            subprocess.Popen([self.dirs[alias]])
+            print("Opening: ", {self.dirs[alias]})
+        elif self.note_exists(alias):
+            print("Opening Note: ", {alias})
+            print(self.notes[alias])
 
     def control_volume(self):
         input_cmd = input('mute/play/#: ')
@@ -57,7 +67,7 @@ class Assistant(threading.Thread):
     def handle_n(self):
         n = input("Enter Note: ")
         title = input("Enter Title: ")
-        self.note[title] = n
+        self.notes[title] = n
         self.save()
         print("Saved Note: ", {title})
 
@@ -83,6 +93,28 @@ class Assistant(threading.Thread):
                 return True
         return False
 
+    def note_exists(self, n) -> bool:
+        if n in self.notes:
+            return True
+        else:
+            print("Note not found!")
+            return False
+
+    def alias_exists(self, alias) -> bool:
+        if alias in self.dirs:
+            return True
+        else:
+            print("Alias not found!")
+            return False
+
+    def read_notes(self) -> dict:
+        self.notes = np.load('notes.npy', allow_pickle=True).item()
+        return self.notes
+
+    def read_dirs(self) -> dict:
+        self.dirs = np.load('dirs.npy', allow_pickle=True).item()
+        return self.dirs
+
     def save(self):
         np.save('dirs.npy', self.dirs)
         np.save('notes.npy', self.notes)
@@ -96,14 +128,6 @@ def find_song_url(song_name) -> str:
     clip = requests.get("https://www.youtube.com/watch?v=" + "{}".format(search_results[0]))
     format_clip = "https://www.youtube.com/watch?v=" + "{}".format(search_results[0])  # refined YouTube video URL
     return format_clip
-
-
-def read_notes() -> dict:
-    return np.load('notes.npy', allow_pickle=True).item()
-
-
-def read_dirs() -> dict:
-    return np.load('dirs.npy', allow_pickle=True).item()
 
 
 a = Assistant()
